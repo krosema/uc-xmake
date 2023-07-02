@@ -1,0 +1,21 @@
+# Project objects
+#OBJS+=		obj/main.o
+
+# Device
+DEVARCH=	cortex-m3
+DEVINST=	thumb
+DEVSPEC=	STM32F10X_MD_VL
+
+# Compiler
+CFLAGS+=	-I. -I./cmsis -I./device -I./inc
+CFLAGS+=	-mcpu=$(DEVARCH) -m$(DEVINST) -D$(DEVSPEC)
+vpath %.c src
+
+# Linker
+LDFLAGS+=	-T$(LINKER_LD) -mcpu=$(DEVARCH) -m$(DEVINST)
+
+# Master makefile
+include ~/uc/a32/stm32f1/makefile.stm32f1
+
+# Flashtools
+include ../makefile.flash

@@ -1,0 +1,31 @@
+# Compilation makefile
+# STM32F1
+
+# Tools
+CC=arm-none-eabi-gcc
+LD=arm-none-eabi-gcc
+AR=arm-none-eabi-ar
+AS=arm-none-eabi-as
+
+ELF=$(notdir $(CURDIR)).elf
+
+LDFLAGS+=	-Wl,--gc-sections
+CFLAGS+=	-g
+
+$(ELF): $(OBJS)
+	$(LD) $(LDFLAGS) -o $@ $(OBJS) $(LDLIBS)
+
+# compile and generate dependency info
+
+obj/%.o:    %.c
+	$(CC) -c $(CFLAGS) $< -o $@
+	$(CC) -MM $(CFLAGS) $< > obj/$*.d
+
+obj/%.o:    %.s
+	$(AS) $< -o $@
+
+clean:
+	rm -f obj/* $(ELF) $(ELF:.elf=.bin) $(CLEANOTHER)
+
+# pull in dependencies
+-include        $(OBJS:.o=.d)

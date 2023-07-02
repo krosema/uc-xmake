@@ -1,0 +1,15 @@
+OC=	arm-none-eabi-objcopy
+GDB=	gdb-multiarch
+BIN=	$(notdir $(CURDIR)).bin
+
+%.bin: %.elf
+	$(OC) -O binary $< $@
+
+flash:	$(BIN)
+	st-flash write $(BIN) 0x08000000
+
+ocd:	
+	openocd -f board/stm32vldiscovery.cfg
+
+debug:	$(ELF) $(BIN)
+	$(GDB) -iex 'target extended-remote localhost:3333' $(ELF)
